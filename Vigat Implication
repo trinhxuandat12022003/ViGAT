@@ -1,0 +1,126 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyPilaDrtrRE6CvdSW9vLlO7",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/trinhxuandat12022003/ViGAT/blob/main/Vigat%20Implication\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Use specific platform build. Other PyTorch 2.0 options: cu118, cu121, rocm5.7\n",
+        "platform='cpu'\n",
+        "# Generate requirements files for specified PyTorch platform\n",
+        "!make torch - window\n",
+        "# Install the project and core + train + test dependencies. Subsets: [dev,train,test,bench,tune]\n",
+        "!pip install -r requirements/core.txt -e .[train,test]"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "jCGuSF1qLodx",
+        "outputId": "5d459bfd-b99f-45e6-fbd4-ca3a45f05f05"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "make: *** No rule to make target 'torch'.  Stop.\n",
+            "\u001b[31mERROR: Could not open requirements file: [Errno 2] No such file or directory: 'requirements/core.txt'\u001b[0m\u001b[31m\n",
+            "\u001b[0m"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 383
+        },
+        "id": "jsw0OZgSLevi",
+        "outputId": "91759db0-cc1a-4ded-ceb3-f32c403be7d5"
+      },
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "ModuleNotFoundError",
+          "evalue": "No module named 'strhub'",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mModuleNotFoundError\u001b[0m                       Traceback (most recent call last)",
+            "\u001b[0;32m<ipython-input-3-b1ee7d8eed8a>\u001b[0m in \u001b[0;36m<cell line: 3>\u001b[0;34m()\u001b[0m\n\u001b[1;32m      1\u001b[0m \u001b[0;32mimport\u001b[0m \u001b[0mtorch\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      2\u001b[0m \u001b[0;32mfrom\u001b[0m \u001b[0mPIL\u001b[0m \u001b[0;32mimport\u001b[0m \u001b[0mImage\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m----> 3\u001b[0;31m \u001b[0;32mfrom\u001b[0m \u001b[0mstrhub\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mdata\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mmodule\u001b[0m \u001b[0;32mimport\u001b[0m \u001b[0mSceneTextDataModule\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m      4\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      5\u001b[0m \u001b[0;31m# Load model and image transforms\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;31mModuleNotFoundError\u001b[0m: No module named 'strhub'",
+            "",
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0;32m\nNOTE: If your import is failing due to a missing package, you can\nmanually install dependencies using either !pip or !apt.\n\nTo view examples of installing some common dependencies, click the\n\"Open Examples\" button below.\n\u001b[0;31m---------------------------------------------------------------------------\u001b[0m\n"
+          ],
+          "errorDetails": {
+            "actions": [
+              {
+                "action": "open_url",
+                "actionText": "Open Examples",
+                "url": "/notebooks/snippets/importing_libraries.ipynb"
+              }
+            ]
+          }
+        }
+      ],
+      "source": [
+        "import torch\n",
+        "from PIL import Image\n",
+        "from strhub.data.module import SceneTextDataModule\n",
+        "\n",
+        "# Load model and image transforms\n",
+        "parseq = torch.hub.load('baudm/parseq', 'parseq', pretrained=True).eval()\n",
+        "img_transform = SceneTextDataModule.get_transform(parseq.hparams.img_size)\n",
+        "\n",
+        "img = Image.open('/path/to/image.png').convert('RGB')\n",
+        "# Preprocess. Model expects a batch of images with shape: (B, C, H, W)\n",
+        "img = img_transform(img).unsqueeze(0)\n",
+        "\n",
+        "logits = parseq(img)\n",
+        "logits.shape  # torch.Size([1, 26, 95]), 94 characters + [EOS] symbol\n",
+        "\n",
+        "# Greedy decoding\n",
+        "pred = logits.softmax(-1)\n",
+        "label, confidence = parseq.tokenizer.decode(pred)\n",
+        "print('Decoded label = {}'.format(label[0]))"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "6ZvFRl3nLpy1"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
